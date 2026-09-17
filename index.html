@@ -481,7 +481,7 @@ h1{font-size:38px;font-weight:700;letter-spacing:-1px;margin-bottom:6px;line-hei
 <main class="main">
   <div class="head">
     <div class="head-l">
-      <h1 id="hi">Hey Poom 👋</h1>
+      <h1 id="hi">Hello 👋</h1>
       <p class="sub-line" id="hiSub"></p>
     </div>
     <button class="add-btn" onclick="openAdd()">
@@ -670,6 +670,11 @@ function draw(){
   if(view==='home') drawHome();
   else if(view==='list') boardBody.innerHTML=listHTML(pick());
   else drawWeek();
+}
+
+function greet(){
+  const h=new Date().getHours();
+  hi.textContent=(h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Still up?')+' 👋';
 }
 
 function drawTop(){
@@ -892,7 +897,8 @@ document.addEventListener('keydown',e=>{
 });
 
 iSubj.innerHTML=SK.map(s=>`<option>${s}</option>`).join('');
-load(); draw();
+load(); greet(); draw();
+setInterval(greet,60000);
 </script>
 </body>
 </html>
