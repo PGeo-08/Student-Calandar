@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#022C43">
+<title>Student Calandar — Your Study Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy-deep:#022C43;
+  --navy-mid:#053F5E;
+  --navy-ocean:#115173;
+  --gold:#FFD700;
+  --gold-dim:rgba(255,215,0,.13);
+
+  --blue:#1B4FD8;
+  --green:#16A34A;
+  --amber:#F5A623;
+  --red:#DC2626;
+
+  --bg:#F8FAFC;
+  --card:#FFFFFF;
+  --line:#E7ECF2;
+  --line-2:#CBD5E1;
+  --ink:#0F1F2E;
+  --ink-2:#64748B;
+  --ink-3:#94A3B8;
+
+  --sb:268px;
+  --top:72px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{overscroll-behavior:none}
+body{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  font-family:'Inter','IBM Plex Sans Thai',system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+svg{stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── TOPBAR ────────────────────────────── */
+.top{
+  position:fixed;top:0;left:0;right:0;height:var(--top);z-index:50;
+  background:var(--navy-deep);display:flex;align-items:center;
+  padding:0 26px;gap:14px;
+  padding-left:max(26px,env(safe-area-inset-left));
+  padding-right:max(26px,env(safe-area-inset-right));
+}
+.brand{display:flex;align-items:center;gap:13px;width:calc(var(--sb) - 26px);flex-shrink:0}
+.brand-mark{
+  width:44px;height:44px;border-radius:11px;background:#fff;
+  display:grid;place-items:center;flex-shrink:0;
+}
+.brand-mark svg{width:25px;height:25px;stroke:var(--navy-deep);stroke-width:1.6}
+.brand-txt{font-size:21px;font-weight:700;color:#fff;letter-spacing:-.4px;white-space:nowrap}
+.brand-txt em{font-style:normal;font-weight:500;color:var(--gold)}
+.top-sp{flex:1}
+.import-btn{
+  display:flex;align-items:center;gap:8px;padding:10px 20px;
+  border:1.5px solid rgba(255,255,255,.28);border-radius:26px;
+  color:#fff;font-size:14.5px;font-weight:500;transition:background .15s,border-color .15s;
+}
+.import-btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.45)}
+.import-btn svg{width:17px;height:17px}
+.bell{
+  position:relative;width:38px;height:38px;border-radius:10px;
+  display:grid;place-items:center;color:rgba(255,255,255,.72);transition:background .15s;
+}
+.bell:hover{background:rgba(255,255,255,.09)}
+.bell svg{width:21px;height:21px}
+.bell-dot{
+  position:absolute;top:7px;right:8px;width:7px;height:7px;
+  border-radius:50%;background:var(--red);border:1.5px solid var(--navy-deep);
+}
+.me{
+  width:40px;height:40px;border-radius:50%;background:var(--navy-ocean);
+  display:grid;place-items:center;color:var(--gold);font-weight:600;font-size:16px;flex-shrink:0;
+}
+.burger{display:none;width:38px;height:38px;border-radius:10px;place-items:center;color:#fff}
+.burger svg{width:22px;height:22px}
+
+/* ── SIDEBAR ───────────────────────────── */
+.side{
+  position:fixed;top:var(--top);left:0;bottom:0;width:var(--sb);z-index:40;
+  background:var(--navy-mid);display:flex;flex-direction:column;
+  padding:18px 0 0;overflow-y:auto;
+}
+.nav{padding:0 14px}
+.nav-i{
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:13px 18px;border-radius:30px;margin-bottom:3px;
+  color:rgba(255,255,255,.66);font-size:16px;text-align:left;
+  transition:background .15s,color .15s;
+}
+.nav-i:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-i.on{background:rgba(255,255,255,.08);color:var(--gold);font-weight:600}
+.nav-i svg{width:21px;height:21px;flex-shrink:0}
+
+.sub-h{
+  padding:26px 32px 12px;font-size:12px;font-weight:600;
+  color:rgba(255,255,255,.4);letter-spacing:.09em;
+}
+.subs{padding:0 14px;flex:1}
+.sub-i{
+  display:flex;align-items:center;gap:13px;width:100%;
+  padding:11px 18px;border-radius:30px;margin-bottom:2px;
+  color:rgba(255,255,255,.7);font-size:15px;text-align:left;
+  transition:background .15s,color .15s;
+}
+.sub-i:hover{background:rgba(255,255,255,.06);color:#fff}
+.sub-i.on{background:rgba(255,255,255,.1);color:#fff;font-weight:500}
+.sub-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.sub-n{margin-left:auto;font-size:14px;color:rgba(255,255,255,.42)}
+.sync{
+  padding:18px 32px calc(18px + env(safe-area-inset-bottom));font-size:13.5px;color:rgba(255,255,255,.4);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* ── MAIN ──────────────────────────────── */
+.main{
+  margin-left:var(--sb);margin-top:var(--top);
+  padding:34px 40px 70px;max-width:1340px;
+}
+.head{display:flex;align-items:flex-start;gap:24px;margin-bottom:26px}
+.head-l{flex:1;min-width:0}
+h1{font-size:38px;font-weight:700;letter-spacing:-1px;margin-bottom:6px;line-height:1.15}
+.sub-line{font-size:17px;color:var(--ink-2)}
+.add-btn{
+  display:flex;align-items:center;gap:9px;flex-shrink:0;
+  background:var(--gold);color:var(--navy-deep);
+  padding:15px 28px;border-radius:32px;font-size:16.5px;font-weight:700;
+  box-shadow:0 2px 12px rgba(255,215,0,.34);transition:filter .15s,transform .1s;
+}
+.add-btn:hover{filter:brightness(.95)}
+.add-btn:active{transform:translateY(1px)}
+.add-btn svg{width:19px;height:19px;stroke-width:2.6}
+
+/* alert */
+.alert{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1.5px solid #FBD5D5;
+  border-radius:15px;padding:18px 24px;margin-bottom:24px;
+}
+.alert-dot{width:11px;height:11px;border-radius:50%;background:var(--red);flex-shrink:0}
+.alert-tx{flex:1;font-size:17px}
+.alert-go{color:var(--blue);font-size:16px;font-weight:600;white-space:nowrap}
+.alert-go:hover{text-decoration:underline}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px}
+.stat{border-radius:15px;padding:24px 26px}
+.stat.a{background:var(--navy-deep)}
+.stat.b{background:var(--navy-mid)}
+.stat.c{background:var(--navy-ocean)}
+.stat-l{
+  font-size:13px;font-weight:600;color:rgba(255,255,255,.56);
+  letter-spacing:.1em;margin-bottom:12px;
+}
+.stat-v{display:flex;align-items:baseline;gap:11px}
+.stat-n{font-size:46px;font-weight:700;color:var(--gold);line-height:.9;letter-spacing:-1.5px}
+.stat-u{font-size:16px;color:rgba(255,255,255,.62)}
+
+/* progress */
+.prog{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:15px;padding:24px 26px;margin-bottom:34px;
+}
+.prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.prog-t{font-size:18px;font-weight:600}
+.prog-p{font-size:19px;font-weight:700;color:var(--green)}
+.prog-bar{height:11px;background:#EEF2F6;border-radius:7px;overflow:hidden;margin-bottom:12px}
+.prog-fill{height:100%;background:var(--green);border-radius:7px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.prog-note{font-size:15.5px;color:var(--ink-2)}
+
+/* section */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.sec-t{font-size:26px;font-weight:700;letter-spacing:-.5px}
+.sec-a{color:var(--blue);font-size:16px;font-weight:600}
+.sec-a:hover{text-decoration:underline}
+
+/* task */
+.task{
+  display:flex;align-items:center;gap:18px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:15px;padding:20px 24px;margin-bottom:12px;
+  transition:border-color .15s,box-shadow .15s;
+}
+.task:hover{border-color:var(--line-2);box-shadow:0 1px 8px rgba(2,44,67,.05)}
+.task.done{opacity:.52}
+.tick{
+  width:26px;height:26px;border-radius:50%;border:2px solid var(--line-2);
+  flex-shrink:0;display:grid;place-items:center;transition:all .18s;
+}
+.tick:hover{border-color:var(--green);background:#F0FDF4}
+.tick.on{background:var(--green);border-color:var(--green)}
+.tick svg{width:14px;height:14px;stroke:#fff;stroke-width:3.2;opacity:0;transition:opacity .18s}
+.tick.on svg{opacity:1}
+.t-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.t-body{flex:1;min-width:0;cursor:pointer}
+.t-name{font-size:19px;font-weight:600;letter-spacing:-.3px;margin-bottom:4px}
+.task.done .t-name{text-decoration:line-through;color:var(--ink-3)}
+.t-meta{font-size:15px;color:var(--ink-2)}
+.t-badge{
+  font-size:15px;font-weight:600;padding:9px 18px;
+  border-radius:24px;white-space:nowrap;flex-shrink:0;
+}
+.t-del{
+  opacity:0;color:var(--ink-3);padding:8px;border-radius:9px;flex-shrink:0;
+  transition:opacity .15s,background .15s,color .15s;
+}
+.task:hover .t-del{opacity:1}
+.t-del:hover{background:#FEF2F2;color:var(--red)}
+.t-del svg{width:18px;height:18px;display:block}
+
+/* week */
+.week{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:22px;overflow-x:auto}
+.wgrid{display:grid;grid-template-columns:120px repeat(7,minmax(130px,1fr));gap:8px;min-width:1010px}
+.wd{text-align:center;padding:10px 4px;font-size:14px;color:var(--ink-2)}
+.wd.now{color:var(--navy-ocean);font-weight:700}
+.wd b{display:block;font-size:24px;font-weight:700;margin-top:4px;letter-spacing:-.6px;color:var(--ink)}
+.wd.now b{color:var(--navy-deep)}
+.lane{
+  font-size:14px;color:var(--ink-2);padding:14px 14px 0 0;
+  text-align:right;border-top:1px solid var(--line);
+}
+.cell{min-height:98px;border-top:1px solid var(--line);padding:9px 4px;display:flex;flex-direction:column;gap:6px}
+.chip{border-radius:11px;padding:10px 12px;font-size:14px;text-align:left;position:relative;transition:filter .15s}
+.chip:hover{filter:brightness(.95)}
+.chip b{display:block;font-weight:600;margin-bottom:2px}
+.chip i{font-style:normal;opacity:.72;font-size:12.5px}
+.chip.done{opacity:.45;text-decoration:line-through}
+.chip-u{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red)}
+
+/* toolbar */
+.bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+.find{position:relative;flex:1;min-width:220px}
+.find svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:19px;height:19px;color:var(--ink-3)}
+.find input{
+  width:100%;padding:13px 18px 13px 46px;border:1px solid var(--line);
+  border-radius:32px;background:var(--card);font-size:15.5px;transition:border-color .15s;
+}
+.find input:focus{outline:none;border-color:var(--navy-ocean)}
+.pick{
+  padding:13px 18px;border:1px solid var(--line);border-radius:32px;
+  background:var(--card);font-size:15.5px;color:var(--ink-2);cursor:pointer;
+}
+.pick:focus{outline:none;border-color:var(--navy-ocean)}
+.segs{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:32px;padding:4px}
+.seg{padding:9px 22px;border-radius:32px;font-size:15.5px;color:var(--ink-2);transition:all .15s}
+.seg.on{background:var(--navy-deep);color:#fff;font-weight:600}
+
+/* empty */
+.empty{text-align:center;padding:80px 24px}
+.empty svg{width:52px;height:52px;color:var(--ink-3);opacity:.45;margin-bottom:20px;stroke-width:1.3}
+.empty p{font-size:20px;font-weight:600;margin-bottom:8px}
+.empty small{font-size:16px;color:var(--ink-2)}
+
+/* modal */
+.veil{
+  position:fixed;inset:0;background:rgba(2,44,67,.5);z-index:70;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.veil.on{display:flex}
+.modal{
+  background:var(--card);border-radius:20px;width:100%;max-width:500px;
+  max-height:88vh;overflow-y:auto;padding:30px;
+}
+.modal h2{font-size:23px;font-weight:700;letter-spacing:-.5px;margin-bottom:22px}
+.fld{margin-bottom:17px}
+.fld label{display:block;font-size:14.5px;color:var(--ink-2);margin-bottom:7px;font-weight:500}
+.fld input,.fld select,.fld textarea{
+  width:100%;padding:13px 15px;border:1px solid var(--line-2);
+  border-radius:12px;background:var(--card);font-size:15.5px;transition:border-color .15s;
+}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--navy-ocean)}
+.fld textarea{resize:vertical;min-height:80px}
+.mfoot{display:flex;gap:11px;justify-content:flex-end;margin-top:26px}
+.b-ghost{
+  border:1px solid var(--line-2);background:var(--card);
+  padding:13px 22px;border-radius:32px;font-size:15.5px;font-weight:500;transition:background .15s;
+}
+.b-ghost:hover{background:var(--bg)}
+.b-gold{
+  background:var(--gold);color:var(--navy-deep);
+  padding:13px 26px;border-radius:32px;font-size:15.5px;font-weight:700;transition:filter .15s;
+}
+.b-gold:hover{filter:brightness(.95)}
+
+.tabs{display:flex;border:1px solid var(--line-2);border-radius:13px;overflow:hidden;margin-bottom:22px}
+.tb{flex:1;padding:13px 8px;font-size:14.5px;color:var(--ink-2);background:var(--bg);transition:all .15s}
+.tb.on{background:var(--card);color:var(--navy-deep);font-weight:600}
+.tb+.tb{border-left:1px solid var(--line-2)}
+.step{background:var(--bg);border-radius:13px;padding:18px 20px;font-size:15px;color:var(--ink-2);line-height:1.85;margin-bottom:13px}
+.step strong{display:block;color:var(--ink);margin-bottom:7px;font-weight:600}
+.step code{background:var(--card);border:1px solid var(--line);padding:2px 8px;border-radius:6px;font-size:14px;font-family:ui-monospace,monospace;color:var(--navy-ocean)}
+.step.gold{border-left:4px solid var(--gold)}
+.drop{
+  width:100%;border:2px dashed var(--line-2);border-radius:13px;padding:34px;
+  text-align:center;font-size:15.5px;color:var(--ink-2);transition:border-color .15s,color .15s;
+}
+.drop:hover{border-color:var(--gold);color:var(--navy-ocean)}
+.drop svg{width:34px;height:34px;margin:0 auto 12px;display:block;stroke-width:1.6}
+.hint{font-size:14px;color:var(--ink-3);margin-bottom:11px;font-family:ui-monospace,monospace}
+.mono{font-family:ui-monospace,monospace;font-size:14px}
+
+/* toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;z-index:90;
+  transform:translateX(-50%) translateY(90px);
+  background:var(--navy-deep);color:#fff;padding:15px 28px;border-radius:32px;
+  font-size:16px;font-weight:600;opacity:0;pointer-events:none;
+  transition:transform .32s cubic-bezier(.34,1.4,.64,1),opacity .32s;
+}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+.scrim{display:none;position:fixed;inset:0;background:rgba(2,44,67,.5);z-index:35}
+.scrim.on{display:block}
+
+
+/* ── iPad: keep the full layout, scale it ─────── */
+@media (min-width:761px) and (max-width:1180px){
+  :root{--sb:230px;--top:66px}
+  .brand-mark{width:38px;height:38px;border-radius:10px}
+  .brand-mark svg{width:22px;height:22px}
+  .brand-txt{font-size:18px}
+  .import-btn{padding:9px 16px;font-size:13.5px}
+  .bell{width:34px;height:34px}
+  .bell svg{width:19px;height:19px}
+  .me{width:36px;height:36px;font-size:15px}
+
+  .nav{padding:0 11px}
+  .nav-i{padding:11px 15px;font-size:15px;gap:12px}
+  .nav-i svg{width:19px;height:19px}
+  .sub-h{padding:20px 26px 10px}
+  .subs{padding:0 11px}
+  .sub-i{padding:9px 15px;font-size:14px;gap:11px}
+  .sub-n{font-size:13px}
+  .sync{padding:15px 26px;font-size:12.5px}
+
+  .main{padding:26px 26px 60px}
+  h1{font-size:31px}
+  .sub-line{font-size:15.5px}
+  .add-btn{padding:13px 22px;font-size:15px}
+  .add-btn svg{width:17px;height:17px}
+
+  .alert{padding:15px 20px;gap:12px}
+  .alert-tx{font-size:15.5px}
+  .alert-go{font-size:14.5px}
+
+  .stats{gap:14px}
+  .stat{padding:19px 21px}
+  .stat-l{font-size:12px;margin-bottom:10px}
+  .stat-n{font-size:38px}
+  .stat-u{font-size:14.5px}
+
+  .prog{padding:20px 22px;margin-bottom:28px}
+  .prog-t{font-size:16.5px}
+  .prog-p{font-size:17px}
+  .prog-note{font-size:14.5px}
+
+  .sec-t{font-size:22px}
+  .sec-a{font-size:14.5px}
+
+  .task{padding:16px 19px;gap:15px}
+  .tick{width:24px;height:24px}
+  .t-name{font-size:17px}
+  .t-meta{font-size:14px}
+  .t-badge{font-size:14px;padding:8px 15px}
+
+  .find input{padding:11px 16px 11px 42px;font-size:14.5px}
+  .pick{padding:11px 15px;font-size:14.5px}
+  .seg{padding:8px 18px;font-size:14.5px}
+
+  .wgrid{grid-template-columns:104px repeat(7,minmax(112px,1fr));min-width:880px}
+  .wd b{font-size:21px}
+  .cell{min-height:88px}
+}
+
+/* iPad portrait: stats stay 3-up but tighter */
+@media (min-width:761px) and (max-width:850px){
+  :root{--sb:212px}
+  .main{padding:22px 20px 56px}
+  h1{font-size:28px}
+  .stat{padding:16px 17px}
+  .stat-n{font-size:33px}
+  .stat-u{font-size:13px}
+  .stat-l{font-size:11px;letter-spacing:.07em}
+  .head{flex-direction:column;gap:14px;align-items:stretch}
+  .add-btn{align-self:flex-start}
+}
+
+/* touch targets + no hover-only affordances on touch devices */
+@media (hover:none){
+  .t-del{opacity:1}
+  .task:hover{box-shadow:none}
+}
+
+@media (max-width:760px){
+  :root{--sb:0px}
+  .burger{display:grid}
+  .brand{width:auto}
+  .brand-txt{font-size:18px}
+  .import-btn span{display:none}
+  .import-btn{padding:10px 14px}
+  .side{width:268px;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1)}
+  .side.open{transform:translateX(0);box-shadow:0 0 50px rgba(2,44,67,.35)}
+  .main{padding:24px 18px 60px}
+  h1{font-size:29px}
+  .sub-line{font-size:15.5px}
+  .head{flex-direction:column;gap:16px}
+  .add-btn{width:100%;justify-content:center}
+  .stats{grid-template-columns:1fr;gap:12px}
+  .stat{display:flex;align-items:center;justify-content:space-between;padding:18px 22px}
+  .stat-l{margin-bottom:0}
+  .stat-n{font-size:34px}
+  .t-name{font-size:17px}
+  .sec-t{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <button class="burger" onclick="sideToggle()" aria-label="Menu">
+    <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M16 3v4M8 3v4M3 11h18"/><path d="M8 15h2M14 15h2M8 18h2"/></svg>
+    </div>
+    <div class="brand-txt">STUDENT<em>CALANDAR</em></div>
+  </div>
+  <div class="top-sp"></div>
+  <button class="import-btn" onclick="openImport()">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+    <span>Import</span>
+  </button>
+  <button class="bell" aria-label="Notifications">
+    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    <span class="bell-dot" id="bellDot" hidden></span>
+  </button>
+  <div class="me">P</div>
+</header>
+
+<div class="scrim" id="scrim" onclick="sideClose()"></div>
+
+<aside class="side" id="side">
+  <nav class="nav">
+    <button class="nav-i on" id="navHome" onclick="go('home')">
+      <svg viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Home
+    </button>
+    <button class="nav-i" id="navCal" onclick="go('week')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Calendar
+    </button>
+    <button class="nav-i" id="navTasks" onclick="go('list')">
+      <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>My tasks
+    </button>
+    <button class="nav-i" onclick="openImport()">
+      <svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>Classroom
+    </button>
+    <button class="nav-i" onclick="toast('Settings coming soon')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6h.09A1.65 1.65 0 0 0 10.6 3.09V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16.11 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+    </button>
+  </nav>
+  <div class="sub-h">SUBJECTS</div>
+  <div class="subs" id="subs"></div>
+  <div class="sync" id="sync">No tasks yet</div>
+</aside>
+
+<main class="main">
+  <div class="head">
+    <div class="head-l">
+      <h1 id="hi">Hey Poom 👋</h1>
+      <p class="sub-line" id="hiSub"></p>
+    </div>
+    <button class="add-btn" onclick="openAdd()">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add something
+    </button>
+  </div>
+
+  <div id="alertSlot"></div>
+
+  <div id="home">
+    <div class="stats">
+      <div class="stat a">
+        <div class="stat-l">ALL TASKS</div>
+        <div class="stat-v"><span class="stat-n" id="nAll">0</span><span class="stat-u">this term</span></div>
+      </div>
+      <div class="stat b">
+        <div class="stat-l">COMING UP</div>
+        <div class="stat-v"><span class="stat-n" id="nOpen">0</span><span class="stat-u">to go</span></div>
+      </div>
+      <div class="stat c">
+        <div class="stat-l">DONE</div>
+        <div class="stat-v"><span class="stat-n" id="nDone">0</span><span class="stat-u">finished</span></div>
+      </div>
+    </div>
+
+    <div class="prog">
+      <div class="prog-top">
+        <span class="prog-t">This week's progress</span>
+        <span class="prog-p" id="pPct">0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+      <p class="prog-note" id="pNote">Nothing tracked yet.</p>
+    </div>
+
+    <div class="sec-h">
+      <h2 class="sec-t">Coming up</h2>
+      <button class="sec-a" onclick="go('list')">All tasks →</button>
+    </div>
+    <div id="homeList"></div>
+  </div>
+
+  <div id="board" hidden>
+    <div class="bar">
+      <div class="find">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="q" placeholder="Search tasks…" oninput="setQ(this.value)">
+      </div>
+      <select class="pick" id="pType" onchange="setType(this.value)">
+        <option value="all">All types</option>
+        <option>Homework</option><option>Report</option><option>Exam</option>
+        <option>Presentation</option><option>Lab</option><option>Other</option>
+      </select>
+      <select class="pick" id="pSort" onchange="setSort(this.value)">
+        <option value="due">By due date</option>
+        <option value="subject">By subject</option>
+        <option value="name">By name</option>
+      </select>
+      <div class="segs">
+        <button class="seg on" id="segList" onclick="go('list')">List</button>
+        <button class="seg" id="segWeek" onclick="go('week')">Week</button>
+      </div>
+    </div>
+    <div id="boardBody"></div>
+  </div>
+</main>
+
+<!-- add / edit -->
+<div class="veil" id="vTask" onclick="if(event.target===this)shut('vTask')">
+  <div class="modal">
+    <h2 id="mTitle">Add something</h2>
+    <div class="fld"><label for="iName">What is it?</label>
+      <input id="iName" type="text" placeholder="e.g. Photosynthesis worksheet"></div>
+    <div class="fld"><label for="iSubj">Subject</label><select id="iSubj"></select></div>
+    <div class="fld"><label for="iDue">Due</label><input id="iDue" type="datetime-local"></div>
+    <div class="fld"><label for="iType">Type</label>
+      <select id="iType"><option>Homework</option><option>Report</option><option>Exam</option>
+        <option>Presentation</option><option>Lab</option><option>Other</option></select></div>
+    <div class="fld"><label for="iNote">Notes</label>
+      <textarea id="iNote" placeholder="Anything you want to remember…"></textarea></div>
+    <div class="mfoot">
+      <button class="b-ghost" onclick="shut('vTask')">Cancel</button>
+      <button class="b-gold" onclick="saveTask()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- import -->
+<div class="veil" id="vImp" onclick="if(event.target===this)shut('vImp')">
+  <div class="modal">
+    <h2>Import from Google Classroom</h2>
+    <div class="tabs">
+      <button class="tb on" id="tbA" onclick="tab('A')">How to</button>
+      <button class="tb" id="tbB" onclick="tab('B')">JSON</button>
+      <button class="tb" id="tbC" onclick="tab('C')">CSV</button>
+      <button class="tb" id="tbD" onclick="tab('D')">Demo</button>
+    </div>
+    <div id="pA">
+      <div class="step"><strong>Option 1 — Google Takeout</strong>
+        Open <code>takeout.google.com</code> and select Classroom only<br>
+        Export, then unzip the file you receive<br>
+        Copy your assignment data into the JSON tab
+      </div>
+      <div class="step"><strong>Option 2 — Download CSV</strong>
+        Open a class in Google Classroom<br>
+        Go to Classwork, press <code>⋮</code>, choose Download as CSV<br>
+        Paste the contents into the CSV tab
+      </div>
+      <div class="step gold"><strong>Coming soon</strong>
+        Sign in with Google once and every assignment syncs automatically.
+      </div>
+    </div>
+    <div id="pB" hidden>
+      <p class="hint">[{"name":"…","subject":"Biology","due":"2026-09-20T23:59","type":"Homework"}]</p>
+      <div class="fld"><textarea id="iJson" class="mono" style="min-height:150px" placeholder="Paste JSON here"></textarea></div>
+      <div class="mfoot"><button class="b-ghost" onclick="shut('vImp')">Cancel</button>
+        <button class="b-gold" onclick="impJSON()">Import</button></div>
+    </div>
+    <div id="pC" hidden>
+      <p class="hint">Title, Course Name, Due Date, Due Time</p>
+      <div class="fld"><textarea id="iCsv" class="mono" style="min-height:150px" placeholder="Title,Course Name,Due Date,Due Time&#10;Worksheet 3,Biology,2026-09-20,23:59"></textarea></div>
+      <div class="mfoot"><button class="b-ghost" onclick="shut('vImp')">Cancel</button>
+        <button class="b-gold" onclick="impCSV()">Import</button></div>
+    </div>
+    <div id="pD" hidden>
+      <button class="drop" onclick="demo()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+        Load 8 sample tasks
+      </button>
+      <div class="mfoot"><button class="b-ghost" onclick="shut('vImp')">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+const SUBJ={
+  'Physics':       {c:'#1B4FD8',bg:'#EDF2FF',t:'#0C3080'},
+  'Biology':       {c:'#16A34A',bg:'#EAFAF0',t:'#0B5228'},
+  'Chemistry':     {c:'#7059C9',bg:'#F1EEFC',t:'#3A2A73'},
+  'Mathematics':   {c:'#F5A623',bg:'#FDF4E3',t:'#6B4405'},
+  'English':       {c:'#DC2626',bg:'#FDEDED',t:'#7F1D1D'},
+  'Thai':          {c:'#0E9CA8',bg:'#E4F7F9',t:'#0A4C52'},
+  'Social Studies':{c:'#DB2777',bg:'#FDECF4',t:'#7D1440'},
+  'Other':         {c:'#64748B',bg:'#F1F5F9',t:'#334155'}
+};
+const SK=Object.keys(SUBJ), sc=s=>SUBJ[s]||SUBJ.Other;
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const KEY='studentcalendar.v2';
+
+let T=[],edit=null,view='home',fSub='all',fType='all',fSort='due',q='';
+
+const dLeft=d=>Math.ceil((new Date(d)-new Date())/864e5);
+const pad=n=>String(n).padStart(2,'0');
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const local=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const when=d=>{const x=new Date(d);return `${MON[x.getMonth()]} ${x.getDate()} · ${pad(x.getHours())}:${pad(x.getMinutes())}`};
+
+function badge(d){
+  const n=dLeft(d);
+  if(n<0)  return {t:'Overdue',      bg:'#FDEDED',c:'#B91C1C'};
+  if(n===0)return {t:'Today',        bg:'#FDEDED',c:'#B91C1C'};
+  if(n===1)return {t:'Tomorrow',     bg:'#FDF4E3',c:'#B45309'};
+  if(n<=3) return {t:n+' days left', bg:'#FDF4E3',c:'#B45309'};
+  return    {t:n+' days left', bg:'#F1F5F9',c:'#64748B'};
+}
+
+function load(){try{T=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){T=[]}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(T))}catch(e){}}
+
+function pick(){
+  let o=T.slice();
+  if(fSub!=='all') o=o.filter(t=>t.subject===fSub);
+  if(fType!=='all')o=o.filter(t=>t.type===fType);
+  if(q)o=o.filter(t=>t.name.toLowerCase().includes(q.toLowerCase())||t.subject.toLowerCase().includes(q.toLowerCase()));
+  o.sort((a,b)=>fSort==='due'?new Date(a.due)-new Date(b.due)
+    :fSort==='subject'?a.subject.localeCompare(b.subject)||new Date(a.due)-new Date(b.due)
+    :a.name.localeCompare(b.name));
+  return o;
+}
+
+function draw(){
+  drawSide(); drawTop();
+  home.hidden=view!=='home';
+  board.hidden=view==='home';
+  if(view==='home') drawHome();
+  else if(view==='list') boardBody.innerHTML=listHTML(pick());
+  else drawWeek();
+}
+
+function drawTop(){
+  const open=T.filter(t=>!t.done), done=T.filter(t=>t.done).length;
+  const soon=open.filter(t=>dLeft(t.due)>=0&&dLeft(t.due)<=3).length;
+  const pct=T.length?Math.round(done/T.length*100):0;
+  nAll.textContent=T.length; nOpen.textContent=open.length; nDone.textContent=done;
+  pFill.style.width=pct+'%'; pPct.textContent=pct+'%';
+  pNote.textContent=!T.length?'Nothing tracked yet.'
+    :pct===100?'Everything done. Take the evening off.'
+    :pct>=60?'More than halfway — keep it rolling.'
+    :pct>0?'A few done already — good start.':'Nothing ticked off yet. Pick the top one.';
+  hiSub.textContent=!T.length
+    ?'Add your first task, or import everything from Google Classroom.'
+    :open.length===0?'Nothing due. Genuinely nothing. Enjoy it.'
+    :`You have ${open.length} thing${open.length>1?'s':''} ahead${soon?`, ${soon} of them soon`:''}. Start with the top one.`;
+  const urgent=open.filter(t=>dLeft(t.due)<=1).sort((a,b)=>new Date(a.due)-new Date(b.due));
+  bellDot.hidden=!urgent.length;
+  alertSlot.innerHTML=urgent.length?`
+    <div class="alert">
+      <span class="alert-dot"></span>
+      <span class="alert-tx"><b>${esc(urgent[0].name)}</b> is ${dLeft(urgent[0].due)<=0?'due today':'tomorrow'} — worth a look.${urgent.length>1?` +${urgent.length-1} more`:''}</span>
+      <button class="alert-go" onclick="go('list')">See it →</button>
+    </div>`:'';
+}
+
+function drawSide(){
+  const n=s=>T.filter(t=>t.subject===s&&!t.done).length;
+  subs.innerHTML=`<button class="sub-i ${fSub==='all'?'on':''}" onclick="setSub('all')">
+      <span class="sub-dot" style="background:var(--gold)"></span>All subjects
+      <span class="sub-n">${T.filter(t=>!t.done).length}</span></button>`
+    +SK.map(s=>`<button class="sub-i ${fSub===s?'on':''}" onclick="setSub('${s}')">
+        <span class="sub-dot" style="background:${sc(s).c}"></span>${s}
+        <span class="sub-n">${n(s)}</span></button>`).join('');
+  sync.textContent=T.length?`Synced just now · ${T.length} task${T.length>1?'s':''}`:'No tasks yet';
+}
+
+function drawHome(){
+  const up=T.filter(t=>!t.done).sort((a,b)=>new Date(a.due)-new Date(b.due)).slice(0,5);
+  homeList.innerHTML=up.length?up.map(rowHTML).join('')
+    :`<div class="empty">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M9 16l2 2 4-4"/></svg>
+        <p>Nothing due yet</p><small>Enjoy it while it lasts 😌</small></div>`;
+}
+
+function listHTML(L){
+  if(!T.length) return `<div class="empty">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <p>No tasks yet</p><small>Add one, or import from Classroom</small></div>`;
+  if(!L.length) return `<div class="empty">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <p>Nothing matches that</p><small>Try a different search or filter</small></div>`;
+  const open=L.filter(t=>!t.done), done=L.filter(t=>t.done);
+  let h='';
+  if(open.length) h+=`<div class="sec-h"><h2 class="sec-t">Coming up</h2></div>`+open.map(rowHTML).join('');
+  if(done.length) h+=`<div class="sec-h" style="margin-top:34px"><h2 class="sec-t" style="color:var(--ink-2)">Done</h2></div>`+done.map(rowHTML).join('');
+  return h;
+}
+
+function rowHTML(t){
+  const c=sc(t.subject), b=badge(t.due);
+  return `<article class="task ${t.done?'done':''}">
+    <button class="tick ${t.done?'on':''}" onclick="flip('${t.id}')" aria-label="${t.done?'Mark not done':'Mark done'}">
+      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></button>
+    <span class="t-dot" style="background:${c.c}"></span>
+    <div class="t-body" onclick="openEdit('${t.id}')">
+      <h3 class="t-name">${esc(t.name)}</h3>
+      <p class="t-meta">${esc(t.subject)} · ${when(t.due)}${t.source==='classroom'?' · Classroom':''}</p>
+    </div>
+    ${t.done?'<span class="t-badge" style="background:#EAFAF0;color:#15803D">Done 🎉</span>'
+            :`<span class="t-badge" style="background:${b.bg};color:${b.c}">${b.t}</span>`}
+    <button class="t-del" onclick="kill('${t.id}')" aria-label="Delete">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+  </article>`;
+}
+
+function drawWeek(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const mon=new Date(today); mon.setDate(today.getDate()-((today.getDay()+6)%7));
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d});
+  const NM=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const lanes=[
+    {l:'Homework & reports',kinds:['Homework','Report','Lab']},
+    {l:'Exams & talks',     kinds:['Exam','Presentation']},
+    {l:'Everything else',   kinds:['Other']}
+  ];
+  let h='<div class="week"><div class="wgrid"><div></div>';
+  days.forEach((d,i)=>{
+    const now=d.toDateString()===today.toDateString();
+    h+=`<div class="wd ${now?'now':''}">${NM[i]}<b>${d.getDate()}</b></div>`;
+  });
+  lanes.forEach(L=>{
+    h+=`<div class="lane">${L.l}</div>`;
+    days.forEach(d=>{
+      h+='<div class="cell">';
+      T.filter(t=>{
+        if(fSub!=='all'&&t.subject!==fSub) return false;
+        if(q&&!t.name.toLowerCase().includes(q.toLowerCase())) return false;
+        const td=new Date(t.due); td.setHours(0,0,0,0);
+        return td.toDateString()===d.toDateString()&&L.kinds.includes(t.type||'Homework');
+      }).forEach(t=>{
+        const c=sc(t.subject), u=!t.done&&dLeft(t.due)<=1;
+        h+=`<button class="chip ${t.done?'done':''}" style="background:${c.bg};color:${c.t}" onclick="openEdit('${t.id}')">
+          <b>${esc(t.name)}</b><i>${esc(t.subject)}</i>${u?'<span class="chip-u"></span>':''}</button>`;
+      });
+      h+='</div>';
+    });
+  });
+  boardBody.innerHTML=h+'</div></div>';
+}
+
+function flip(id){
+  const t=T.find(x=>x.id===id); if(!t) return;
+  t.done=!t.done; save(); draw();
+  if(t.done) toast(`Nice work! That's ${T.filter(x=>x.done).length} done. 🎉`);
+}
+function kill(id){
+  const t=T.find(x=>x.id===id); if(!t) return;
+  if(!confirm(`Delete "${t.name}"?`)) return;
+  T=T.filter(x=>x.id!==id); save(); draw(); toast('Deleted');
+}
+function setSub(s){fSub=s; if(view==='home')view='list'; draw(); sideClose(); syncNav()}
+function setQ(v){q=v;draw()} function setType(v){fType=v;draw()} function setSort(v){fSort=v;draw()}
+function go(v){view=v; draw(); sideClose(); syncNav()}
+function syncNav(){
+  navHome.classList.toggle('on',view==='home');
+  navCal.classList.toggle('on',view==='week');
+  navTasks.classList.toggle('on',view==='list');
+  segList.classList.toggle('on',view==='list');
+  segWeek.classList.toggle('on',view==='week');
+}
+
+function openAdd(){
+  edit=null; mTitle.textContent='Add something';
+  iName.value=''; iNote.value=''; iType.value='Homework';
+  iSubj.value=fSub!=='all'?fSub:'Biology';
+  const d=new Date(); d.setHours(23,59,0,0); iDue.value=local(d);
+  vTask.classList.add('on'); setTimeout(()=>iName.focus(),60);
+}
+function openEdit(id){
+  const t=T.find(x=>x.id===id); if(!t) return;
+  edit=id; mTitle.textContent='Edit task';
+  iName.value=t.name; iSubj.value=t.subject; iDue.value=local(new Date(t.due));
+  iType.value=t.type||'Homework'; iNote.value=t.note||'';
+  vTask.classList.add('on');
+}
+function saveTask(){
+  const name=iName.value.trim();
+  if(!name){iName.focus();return}
+  if(!iDue.value){iDue.focus();return}
+  const prev=edit?T.find(t=>t.id===edit):null;
+  const t={id:edit||Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    name,subject:iSubj.value,due:iDue.value,type:iType.value,
+    note:iNote.value.trim(),done:prev?prev.done:false,source:prev?prev.source:'manual'};
+  T=edit?T.map(x=>x.id===edit?t:x):T.concat(t);
+  save(); shut('vTask'); draw(); toast(edit?'Updated':'Added');
+}
+function openImport(){vImp.classList.add('on'); sideClose()}
+function shut(id){document.getElementById(id).classList.remove('on')}
+function tab(k){['A','B','C','D'].forEach(x=>{
+  document.getElementById('p'+x).hidden=x!==k;
+  document.getElementById('tb'+x).classList.toggle('on',x===k)})}
+
+function addAll(rows){
+  const made=rows.map(r=>{
+    const s=r.subject||r.course||r['Course Name']||'Other';
+    return {id:Date.now()+'-'+Math.random().toString(36).slice(2,7),
+      name:r.name||r.title||r.Title||'Untitled',
+      subject:SUBJ[s]?s:'Other', due:mkDue(r), type:r.type||'Homework',
+      note:r.note||r.description||'', done:false, source:'classroom'};
+  });
+  T=T.concat(made); save(); shut('vImp'); draw();
+  toast(`Imported ${made.length} task${made.length>1?'s':''}`);
+}
+function mkDue(r){
+  const d=r.due||r.dueDate||r['Due Date']||'';
+  const t=r['Due Time']||r.dueTime||'23:59';
+  if(d.includes('T')) return d;
+  if(d) return `${d}T${t}`;
+  const x=new Date(); x.setHours(23,59,0,0); return local(x);
+}
+function impJSON(){
+  const raw=iJson.value.trim(); if(!raw) return;
+  try{const a=JSON.parse(raw); if(!Array.isArray(a))throw 0; addAll(a); iJson.value=''}
+  catch(e){toast("Couldn't read that JSON")}
+}
+function impCSV(){
+  const raw=iCsv.value.trim(); if(!raw) return;
+  const L=raw.split(/\r?\n/).filter(Boolean);
+  if(L.length<2){toast('CSV needs a header and at least one row');return}
+  const head=L[0].split(',').map(s=>s.trim());
+  const rows=L.slice(1).map(l=>{const v=l.split(',').map(s=>s.trim());
+    return Object.fromEntries(head.map((h,i)=>[h,v[i]||'']))}).filter(r=>r.Title||r.name);
+  if(!rows.length){toast('No rows found');return}
+  addAll(rows); iCsv.value='';
+}
+function demo(){
+  const at=(a,h=23,m=59)=>{const d=new Date();d.setDate(d.getDate()+a);d.setHours(h,m,0,0);return local(d)};
+  addAll([
+    {name:'Photosynthesis worksheet',   subject:'Biology',       due:at(1),       type:'Homework'},
+    {name:'Midterm — chapters 4 to 6',  subject:'Mathematics',   due:at(2,9,0),   type:'Exam'},
+    {name:'Reading response, ch. 12',   subject:'English',       due:at(3),       type:'Homework'},
+    {name:'Titration lab write-up',     subject:'Chemistry',     due:at(4),       type:'Lab'},
+    {name:'Circuits problem set',       subject:'Physics',       due:at(5),       type:'Homework'},
+    {name:'River landforms talk',       subject:'Social Studies',due:at(6,10,30), type:'Presentation'},
+    {name:'Poetry analysis essay',      subject:'Thai',          due:at(7),       type:'Report'},
+    {name:'Vocabulary quiz prep',       subject:'English',       due:at(-1),      type:'Homework'}
+  ]);
+}
+
+let tt;
+function toast(m){
+  toastEl.textContent=m; toastEl.classList.add('on');
+  clearTimeout(tt); tt=setTimeout(()=>toastEl.classList.remove('on'),2500);
+}
+function sideToggle(){side.classList.toggle('open'); scrim.classList.toggle('on')}
+function sideClose(){side.classList.remove('open'); scrim.classList.remove('on')}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){shut('vTask');shut('vImp');sideClose()}
+});
+
+iSubj.innerHTML=SK.map(s=>`<option>${s}</option>`).join('');
+load(); draw();
+</script>
+</body>
+</html>
