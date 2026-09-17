@@ -242,6 +242,105 @@ h1{font-size:38px;font-weight:700;letter-spacing:-1px;margin-bottom:6px;line-hei
 .chip.done{opacity:.45;text-decoration:line-through}
 .chip-u{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--red)}
 
+
+/* ── calendar nav strip ─────────────────── */
+.calnav{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.cal-title{font-size:22px;font-weight:700;letter-spacing:-.5px;min-width:190px}
+.nav-btn{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
+  background:var(--card);display:grid;place-items:center;color:var(--ink-2);
+  transition:background .15s,border-color .15s,color .15s;
+}
+.nav-btn:hover{background:var(--bg);border-color:var(--line-2);color:var(--ink)}
+.nav-btn svg{width:19px;height:19px;stroke-width:2.2}
+.today-btn{
+  padding:10px 20px;border-radius:32px;border:1px solid var(--line);
+  background:var(--card);font-size:15px;font-weight:600;color:var(--ink);
+  transition:background .15s,border-color .15s;
+}
+.today-btn:hover{background:var(--bg);border-color:var(--line-2)}
+.calnav-sp{flex:1}
+
+/* ── month grid ─────────────────────────── */
+.month{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px;overflow-x:auto}
+.mgrid{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:7px;min-width:880px}
+.mhead{
+  text-align:center;padding:8px 0 12px;font-size:13px;font-weight:600;
+  color:var(--ink-2);letter-spacing:.06em;
+}
+.mcell{
+  min-height:112px;border:1px solid var(--line);border-radius:11px;
+  padding:9px;display:flex;flex-direction:column;gap:5px;background:var(--card);
+  transition:border-color .15s;
+}
+.mcell.pad{background:#FBFCFD;border-color:#F1F4F7}
+.mcell.now{border:2px solid var(--navy-ocean);background:#F4F9FC}
+.mnum{font-size:15px;font-weight:600;color:var(--ink);line-height:1;margin-bottom:2px}
+.mcell.pad .mnum{color:var(--ink-3);font-weight:400}
+.mcell.now .mnum{color:var(--navy-deep);font-weight:700}
+.mchip{
+  border-radius:7px;padding:5px 8px;font-size:12.5px;font-weight:500;
+  text-align:left;line-height:1.3;position:relative;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:filter .15s;
+}
+.mchip:hover{filter:brightness(.94)}
+.mchip.done{opacity:.42;text-decoration:line-through}
+.mchip-u{
+  display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:var(--red);margin-right:5px;vertical-align:1px;
+}
+.mmore{font-size:12px;color:var(--ink-3);padding:2px 8px;text-align:left}
+.mmore:hover{color:var(--blue)}
+
+/* ── year grid ──────────────────────────── */
+.year{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.ym{
+  background:var(--card);border:1px solid var(--line);border-radius:15px;
+  padding:16px 14px;transition:border-color .15s;
+}
+.ym:hover{border-color:var(--line-2)}
+.ym.now{border:2px solid var(--navy-ocean);background:#F7FBFD}
+.ym-h{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:12px;padding:0 3px;
+}
+.ym-n{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.ym.now .ym-n{color:var(--navy-ocean)}
+.ym-c{font-size:12.5px;color:var(--ink-3);font-weight:500}
+.ym-c b{color:var(--red);font-weight:700}
+.ymg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.ymd{
+  aspect-ratio:1;display:grid;place-items:center;border-radius:6px;
+  font-size:11.5px;color:var(--ink-2);position:relative;transition:background .12s;
+}
+.ymd.h{font-size:10px;color:var(--ink-3);font-weight:600}
+.ymd.on{cursor:pointer}
+.ymd.on:hover{background:var(--bg)}
+.ymd.today{background:var(--navy-deep);color:#fff;font-weight:700}
+.ymd-b{
+  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  display:flex;gap:1.5px;
+}
+.ymd-b i{width:3.5px;height:3.5px;border-radius:50%;display:block}
+.ymd.today .ymd-b i{background:var(--gold)!important}
+
+@media (max-width:1180px){
+  .year{grid-template-columns:repeat(3,1fr);gap:13px}
+  .cal-title{font-size:19px;min-width:160px}
+  .mgrid{grid-template-columns:repeat(7,minmax(104px,1fr));min-width:770px}
+  .mcell{min-height:98px}
+}
+@media (max-width:860px){
+  .year{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:620px){
+  .year{grid-template-columns:1fr}
+  .calnav{gap:8px}
+  .cal-title{font-size:17px;min-width:0;flex:1}
+  .today-btn{padding:9px 15px;font-size:14px}
+  .nav-btn{width:36px;height:36px}
+}
+
 /* toolbar */
 .bar{display:flex;gap:12px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
 .find{position:relative;flex:1;min-width:220px}
@@ -542,6 +641,8 @@ h1{font-size:38px;font-weight:700;letter-spacing:-1px;margin-bottom:6px;line-hei
       <div class="segs">
         <button class="seg on" id="segList" onclick="go('list')">List</button>
         <button class="seg" id="segWeek" onclick="go('week')">Week</button>
+        <button class="seg" id="segMonth" onclick="go('month')">Month</button>
+        <button class="seg" id="segYear" onclick="go('year')">Year</button>
       </div>
     </div>
     <div id="boardBody"></div>
@@ -633,6 +734,7 @@ const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','De
 const KEY='studentcalendar.v2';
 
 let T=[],edit=null,view='home',fSub='all',fType='all',fSort='due',q='';
+let cur=new Date(); cur.setHours(0,0,0,0);
 
 const dLeft=d=>Math.ceil((new Date(d)-new Date())/864e5);
 const pad=n=>String(n).padStart(2,'0');
@@ -669,7 +771,9 @@ function draw(){
   board.hidden=view==='home';
   if(view==='home') drawHome();
   else if(view==='list') boardBody.innerHTML=listHTML(pick());
-  else drawWeek();
+  else if(view==='week') drawWeek();
+  else if(view==='month') drawMonth();
+  else drawYear();
 }
 
 function greet(){
@@ -751,11 +855,53 @@ function rowHTML(t){
   </article>`;
 }
 
+const MFULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const sameDay=(a,b)=>a.toDateString()===b.toDateString();
+const startOfWeek=d=>{const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+
+/* tasks on one day, respecting the active filters */
+function onDay(d,kinds){
+  return T.filter(t=>{
+    if(fSub!=='all'&&t.subject!==fSub) return false;
+    if(fType!=='all'&&t.type!==fType) return false;
+    if(q&&!t.name.toLowerCase().includes(q.toLowerCase())&&!t.subject.toLowerCase().includes(q.toLowerCase())) return false;
+    const td=new Date(t.due); td.setHours(0,0,0,0);
+    if(!sameDay(td,d)) return false;
+    return kinds ? kinds.includes(t.type||'Homework') : true;
+  }).sort((a,b)=>new Date(a.due)-new Date(b.due));
+}
+
+/* ‹ Today › + period label */
+function navStrip(label){
+  return `<div class="calnav">
+    <button class="nav-btn" onclick="step(-1)" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="nav-btn" onclick="step(1)" aria-label="Next">
+      <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+    <h2 class="cal-title">${label}</h2>
+    <div class="calnav-sp"></div>
+    <button class="today-btn" onclick="jumpToday()">Today</button>
+  </div>`;
+}
+function step(n){
+  const d=new Date(cur);
+  if(view==='week')       d.setDate(d.getDate()+7*n);
+  else if(view==='month') d.setMonth(d.getMonth()+n,1);
+  else                    d.setFullYear(d.getFullYear()+n,0,1);
+  cur=d; draw();
+}
+function jumpToday(){cur=new Date(); cur.setHours(0,0,0,0); draw()}
+
+/* ── WEEK ─────────────────────────────────────────────── */
 function drawWeek(){
   const today=new Date(); today.setHours(0,0,0,0);
-  const mon=new Date(today); mon.setDate(today.getDate()-((today.getDay()+6)%7));
+  const mon=startOfWeek(cur);
   const days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d});
-  const NM=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const end=days[6];
+  const label = mon.getMonth()===end.getMonth()
+    ? `${MFULL[mon.getMonth()]} ${mon.getDate()}–${end.getDate()}, ${mon.getFullYear()}`
+    : `${MON[mon.getMonth()]} ${mon.getDate()} – ${MON[end.getMonth()]} ${end.getDate()}, ${end.getFullYear()}`;
   const lanes=[
     {l:'Homework & reports',kinds:['Homework','Report','Lab']},
     {l:'Exams & talks',     kinds:['Exam','Presentation']},
@@ -763,19 +909,13 @@ function drawWeek(){
   ];
   let h='<div class="week"><div class="wgrid"><div></div>';
   days.forEach((d,i)=>{
-    const now=d.toDateString()===today.toDateString();
-    h+=`<div class="wd ${now?'now':''}">${NM[i]}<b>${d.getDate()}</b></div>`;
+    h+=`<div class="wd ${sameDay(d,today)?'now':''}">${DOW[i]}<b>${d.getDate()}</b></div>`;
   });
   lanes.forEach(L=>{
     h+=`<div class="lane">${L.l}</div>`;
     days.forEach(d=>{
       h+='<div class="cell">';
-      T.filter(t=>{
-        if(fSub!=='all'&&t.subject!==fSub) return false;
-        if(q&&!t.name.toLowerCase().includes(q.toLowerCase())) return false;
-        const td=new Date(t.due); td.setHours(0,0,0,0);
-        return td.toDateString()===d.toDateString()&&L.kinds.includes(t.type||'Homework');
-      }).forEach(t=>{
+      onDay(d,L.kinds).forEach(t=>{
         const c=sc(t.subject), u=!t.done&&dLeft(t.due)<=1;
         h+=`<button class="chip ${t.done?'done':''}" style="background:${c.bg};color:${c.t}" onclick="openEdit('${t.id}')">
           <b>${esc(t.name)}</b><i>${esc(t.subject)}</i>${u?'<span class="chip-u"></span>':''}</button>`;
@@ -783,7 +923,80 @@ function drawWeek(){
       h+='</div>';
     });
   });
-  boardBody.innerHTML=h+'</div></div>';
+  boardBody.innerHTML=navStrip(label)+h+'</div></div>';
+}
+
+/* ── MONTH ────────────────────────────────────────────── */
+function drawMonth(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const first=new Date(cur.getFullYear(),cur.getMonth(),1);
+  const gridStart=startOfWeek(first);
+  const weeks=Math.ceil((((new Date(cur.getFullYear(),cur.getMonth()+1,0))-gridStart)/864e5+1)/7);
+
+  let h='<div class="month"><div class="mgrid">';
+  DOW.forEach(d=>h+=`<div class="mhead">${d}</div>`);
+
+  for(let i=0;i<weeks*7;i++){
+    const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
+    const pad=d.getMonth()!==cur.getMonth();
+    const now=sameDay(d,today);
+    const list=onDay(d);
+    h+=`<div class="mcell ${pad?'pad':''} ${now?'now':''}">
+          <span class="mnum">${d.getDate()}</span>`;
+    list.slice(0,3).forEach(t=>{
+      const c=sc(t.subject), u=!t.done&&dLeft(t.due)<=1;
+      h+=`<button class="mchip ${t.done?'done':''}" style="background:${c.bg};color:${c.t}"
+            onclick="openEdit('${t.id}')" title="${esc(t.name)} · ${esc(t.subject)}">
+            ${u?'<span class="mchip-u"></span>':''}${esc(t.name)}</button>`;
+    });
+    if(list.length>3) h+=`<button class="mmore" onclick="zoomDay('${d.toISOString()}')">+${list.length-3} more</button>`;
+    h+='</div>';
+  }
+  boardBody.innerHTML=navStrip(`${MFULL[cur.getMonth()]} ${cur.getFullYear()}`)+h+'</div></div>';
+}
+function zoomDay(iso){cur=new Date(iso); cur.setHours(0,0,0,0); go('week')}
+
+/* ── YEAR ─────────────────────────────────────────────── */
+function drawYear(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const Y=cur.getFullYear();
+  let h='<div class="year">';
+
+  for(let m=0;m<12;m++){
+    const first=new Date(Y,m,1), last=new Date(Y,m+1,0);
+    const gs=startOfWeek(first);
+    const rows=Math.ceil(((last-gs)/864e5+1)/7);
+    const isNow=today.getFullYear()===Y&&today.getMonth()===m;
+
+    let total=0,late=0;
+    for(let d=1;d<=last.getDate();d++){
+      const list=onDay(new Date(Y,m,d));
+      total+=list.length;
+      late+=list.filter(t=>!t.done&&dLeft(t.due)<0).length;
+    }
+
+    h+=`<div class="ym ${isNow?'now':''}">
+          <div class="ym-h">
+            <span class="ym-n">${MFULL[m]}</span>
+            <span class="ym-c">${total?`${total} task${total>1?'s':''}`:'—'}${late?` · <b>${late} late</b>`:''}</span>
+          </div><div class="ymg">`;
+    DOW.forEach(d=>h+=`<span class="ymd h">${d[0]}</span>`);
+
+    for(let i=0;i<rows*7;i++){
+      const d=new Date(gs); d.setDate(gs.getDate()+i);
+      if(d.getMonth()!==m){h+='<span class="ymd"></span>';continue}
+      const list=onDay(d);
+      const isT=sameDay(d,today);
+      const dots=[...new Set(list.map(t=>sc(t.subject).c))].slice(0,3);
+      h+=`<span class="ymd ${list.length?'on':''} ${isT?'today':''}"
+             ${list.length?`onclick="zoomDay('${d.toISOString()}')" title="${list.length} task${list.length>1?'s':''}"`:''}>
+            ${d.getDate()}
+            ${dots.length?`<span class="ymd-b">${dots.map(c=>`<i style="background:${c}"></i>`).join('')}</span>`:''}
+          </span>`;
+    }
+    h+='</div></div>';
+  }
+  boardBody.innerHTML=navStrip(String(Y))+h+'</div>';
 }
 
 function flip(id){
@@ -801,10 +1014,12 @@ function setQ(v){q=v;draw()} function setType(v){fType=v;draw()} function setSor
 function go(v){view=v; draw(); sideClose(); syncNav()}
 function syncNav(){
   navHome.classList.toggle('on',view==='home');
-  navCal.classList.toggle('on',view==='week');
+  navCal.classList.toggle('on',['week','month','year'].includes(view));
   navTasks.classList.toggle('on',view==='list');
   segList.classList.toggle('on',view==='list');
   segWeek.classList.toggle('on',view==='week');
+  segMonth.classList.toggle('on',view==='month');
+  segYear.classList.toggle('on',view==='year');
 }
 
 function openAdd(){
